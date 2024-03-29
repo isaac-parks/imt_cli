@@ -151,7 +151,7 @@ fn parse_args(args: &mut Vec<String>) -> Vec<Action> {
     if actions.len() > 0  {
         return actions
     }
-    actions.push(Action::Prune);
+    actions.push(Action::Prune); // gonna make this wonky for now
     actions
 }
 fn main() {
