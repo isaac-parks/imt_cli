@@ -1,8 +1,6 @@
-use chrono::Local;
-use chrono::Datelike;
-
 use std::env;
 use std::io::Error;
+use std::time::{SystemTime, UNIX_EPOCH};
 use env::VarError;
 
 use std::process::Command;
@@ -15,21 +13,6 @@ use std::fs::FileType;
 enum Action {
     Install,
     Prune
-}
-
-fn parse_args(args: &mut Vec<String>) -> Vec<Action> {
-    let mut actions = vec![];
-    for arg in &mut args[1..] {
-        match arg.as_str() {
-            "--install" => actions.push(Action::Install),
-            &_ => ()
-        }
-    }
-    if actions.len() > 0  {
-        return actions
-    }
-    actions.push(Action::Prune);
-    actions
 }
 
 fn install() {
@@ -52,11 +35,11 @@ fn prune() {
                         continue; // skip non dir
                     }
                     set_working_dir(&String::from(dir_entry.path().to_str().unwrap()));
+                    // make tuple vec, each branch name, last commit date
                     // todo get all branches
-                    // loop through all branches and run git log
                     // compare date to current date
                     // if too old delete
-                    remove_origins();
+                    get_cd_last_commit_dates();
                     set_working_dir(&String::from(root_dir_path));
                 },
                 _ => ()
@@ -65,21 +48,25 @@ fn prune() {
     }
 }
 
-fn remove_origins() {
-    let mut git_cmd = Command::new("git");
-    git_cmd.args(["fetch", "--all", "--prune"]);
-    let out: Result<Output, Error> = git_cmd.output();
-    match &out {
-        Output => {
-            dbg!(env::current_dir().unwrap());
-            dbg!(&out);
-            println!("{:?}", &out.unwrap().stdout);
-        }
-        Error => {
-            dbg!(out);
-        }
+fn get_cd_last_commit_dates() {
+    // let branch_commit_dates = Vec::new();
+    let mut branch_cmd = Command::new("git");
+    branch_cmd.args(["for-each-ref", &format!("--format=%%(refname:short)|%%(committerdate:unix)"), "refs/heads"]);
+    let output = branch_cmd.output();
+    match &output {
+        Ok(out) => {
+            println!("{:?}", out.stdout);
+        },
+        _ => ()
     }
+
 }
+
+// fn rm_old_branch() {
+//     let mut branch_cmd = Command::new("git");
+//     git_cmd.args(["fetch", "--all", "--prune"]);
+    
+// }
 
 fn set_working_dir(service_dir: &String) -> bool {
     let root = Path::new(&service_dir);
@@ -101,6 +88,20 @@ fn make_dir(service_dir: Result<String,VarError>) -> String{
     String::new()
 }
 
+fn parse_args(args: &mut Vec<String>) -> Vec<Action> {
+    let mut actions = vec![];
+    for arg in &mut args[1..] {
+        match arg.as_str() {
+            "--install" => actions.push(Action::Install),
+            &_ => ()
+        }
+    }
+    if actions.len() > 0  {
+        return actions
+    }
+    actions.push(Action::Prune);
+    actions
+}
 fn main() {
     let mut args: Vec<String> = env::args().collect();
     let actions: Vec<Action> = parse_args(&mut args);
