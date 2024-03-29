@@ -1,15 +1,12 @@
 use std::env;
-use std::io::Error;
 use std::time::{SystemTime, Duration, UNIX_EPOCH};
 use env::VarError;
 
 use std::process::Command;
-use std::process::Output;
 use std::path::Path;
 use std::fs::read_dir;
-use std::fs::FileType;
-use std::str::FromStr;
 
+// Will move all actions into their own module when more stuff gets added
 #[derive(PartialEq)]
 enum Action {
     Install,
@@ -17,7 +14,8 @@ enum Action {
 }
 
 fn install() {
- println("Jk, this isn't implemented yet.");
+    // TODO: add to path? Set env variables?
+    println!("Jk, this isn't implemented yet.");
 }
 
 fn rm_old_branches_from_cd(branch_data: &Vec<(String, usize)>) -> usize {
@@ -29,9 +27,9 @@ fn rm_old_branches_from_cd(branch_data: &Vec<(String, usize)>) -> usize {
     let ignore: [&str; 4] = ["staging", "production", "qa", "master"];
     let mut deleted_num = 0;
     for data in branch_data {
+        let branch_name = &data.0.as_str();
         let last_commit_date = Duration::from_secs(data.1.try_into().unwrap());
         if last_commit_date < cut_off {
-            let branch_name = &data.0.as_str();
             if !ignore.contains(branch_name) {
                 let mut delete_cmd = Command::new("git");
                 delete_cmd.args(["branch", "-D", branch_name]);
@@ -52,7 +50,7 @@ fn rm_old_branches_from_cd(branch_data: &Vec<(String, usize)>) -> usize {
             }
         }
     }
-    println!("Deleted {} branches from {:?}🪦", deleted_num, env::current_dir().unwrap());
+    println!("Tried deleted {} branches from {:?}🪦", deleted_num, env::current_dir().unwrap());
     deleted_num
 }
 
@@ -65,7 +63,7 @@ fn get_cd_last_commit_dates() -> Vec<(String, usize)> {
         Ok(out) => {
             let p = "\n";
             let utf8 = String::from_utf8(out.stdout).unwrap();
-            let mut split: &Vec<&str> = &utf8.split(&p).collect();
+            let split: &Vec<&str> = &utf8.split(&p).collect();
             for branch_split in split {
                 let name_date_split: Vec<&str> = branch_split.split('|').collect();
                 if name_date_split.len() != 2 {
@@ -111,8 +109,11 @@ fn make_dir(service_dir: Result<String,VarError>) -> String{
 
 fn prune() -> usize {
     let service_dir: String = make_dir(env::var("IMT_SERVICES_DIR"));
+    // TODO support vue & pip packages
     if !set_working_dir(&service_dir) {
         println!("ERROR: Couldn't set working directory");
+
+        return 0;
     }
     let root_dir = env::current_dir().unwrap();
     let root_dir_path = root_dir.as_path().to_str().unwrap();
@@ -129,7 +130,6 @@ fn prune() -> usize {
                     let branch_tups: Vec<(String, usize)> = get_cd_last_commit_dates();
                     let num_deleted: usize = rm_old_branches_from_cd(&branch_tups);
                     total_del += num_deleted;
-                    get_cd_last_commit_dates();
                     set_working_dir(&String::from(root_dir_path));
                 },
                 _ => ()
@@ -144,25 +144,27 @@ fn parse_args(args: &mut Vec<String>) -> Vec<Action> {
     let mut actions = vec![];
     for arg in &mut args[1..] {
         match arg.as_str() {
-            "--install" => actions.push(Action::Install),
+            "install" => actions.push(Action::Install),
+            "prune" => actions.push(Action::Prune), // TODO directory args?
             &_ => ()
         }
     }
-    if actions.len() > 0  {
-        return actions
-    }
-    actions.push(Action::Prune); // gonna make this wonky for now
+
     actions
 }
+
 fn main() {
     let mut args: Vec<String> = env::args().collect();
     let actions: Vec<Action> = parse_args(&mut args);
+    if actions.len() == 0  {
+        println!("Available Commands: --install, --prune"); // hardcoding until more features are added
+    }
     for action in actions {
         match action {
             Action::Install => install(),
             Action::Prune => {
                 let total_del: usize = prune();
-                println!("Done pruning. Deleted a total of {} branches.", total_del);
+                println!("Done pruning. Tried deleted a total of {} branches. If errors were found, they will be printed above.", total_del);
             }
         }
     }
