@@ -15,7 +15,7 @@ enum Action {
 
 fn install() {
     // TODO: add to path? Set env variables?
-    println!("Jk, this isn't implemented yet.");
+    println!("Jk, this isn't implemented yet. You'll have to add IMT_SERVICES_DIR to your environment variables.");
 }
 
 fn rm_old_branches_from_cd(branch_data: &Vec<(String, usize)>) -> usize {
@@ -95,7 +95,7 @@ fn set_working_dir(service_dir: &String) -> bool {
 
 fn make_dir(service_dir: Result<String,VarError>) -> String{
     if !service_dir.is_ok() {
-        eprintln!("ERROR: You are trying to prune, but don't have the IMT_SERVICES_DIR environment variable set. (Hint: try running this command with --install OR setting the environment variable IMT_SERVICES_DIR to the directory containing IMT services.)");
+        eprintln!("ERROR: You are trying to prune, but don't have the IMT_SERVICES_DIR environment variable set. (Hint: try running this command with install OR setting the environment variable IMT_SERVICES_DIR to the directory containing IMT services.)");
         return String::new()
     }
     let home_dir: String = env::var("HOME").unwrap();
@@ -157,7 +157,7 @@ fn main() {
     let mut args: Vec<String> = env::args().collect();
     let actions: Vec<Action> = parse_args(&mut args);
     if actions.len() == 0  {
-        println!("Available Commands: --install, --prune"); // hardcoding until more features are added
+        println!("Available Commands: `imt_cli install`, `imt_cli prune`"); // hardcoding until more features are added
     }
     for action in actions {
         match action {
