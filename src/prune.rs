@@ -3,10 +3,9 @@ use std::time::{SystemTime, Duration, UNIX_EPOCH};
 use env::VarError;
 
 use std::process::Command;
-use std::path::Path;
 use std::fs::read_dir;
 
-use crate::constants::{IMT_SERVICES_DIR, ProgramStatus};
+use crate::constants::{IMT_SERVICES_DIR, ProgramStatus, set_working_dir};
 
 
 fn rm_old_branches_from_cd(branch_data: &Vec<(String, usize)>) -> usize {
@@ -78,12 +77,6 @@ fn get_cd_last_commit_dates() -> Vec<(String, usize)> {
     branch_commit_dates
 }
 
-fn set_working_dir(service_dir: &String) -> bool {
-    let root = Path::new(&service_dir);
-    let res = env::set_current_dir(&root);
-    res.is_ok()
-}
-
 fn make_dir(service_dir: Result<String,VarError>) -> String{
     if !service_dir.is_ok() {
         eprintln!("ERROR: You are trying to prune, but don't have the {} environment variable set. 
@@ -103,7 +96,7 @@ fn make_dir(service_dir: Result<String,VarError>) -> String{
     String::new()
 }
 
-pub fn run(args: Vec<String>) -> ProgramStatus {
+pub fn run(_args: Vec<String>) -> ProgramStatus { // Args unused for now
     let service_dir: String = make_dir(env::var(IMT_SERVICES_DIR));
     // TODO support vue & pip packages
     if !set_working_dir(&service_dir) {

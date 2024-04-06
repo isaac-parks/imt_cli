@@ -1,20 +1,15 @@
-use std::env;
-use std::time::{SystemTime, Duration, UNIX_EPOCH};
-use env::VarError;
-
-use std::process::Command;
-use std::path::Path;
-use std::fs::read_dir;
-use std::slice::Iter;
-
 mod prune;
+mod nublink;
 mod constants;
+
+use std::env;
 use self::constants::{IMT_SERVICES_DIR, ProgramStatus};
 
 
 #[derive(PartialEq)]
 enum ActionTypes {
     Install,
+    Nublink,
     Help,
     Prune
 }
@@ -31,8 +26,10 @@ fn parse_args(args: &mut Vec<String>) -> (Option<ActionTypes>, Vec<String>) {
     for arg in &mut args[1..] {
         if let Option::None = action {
             match arg.as_str() {
+                "help" => action = Some(ActionTypes::Help),
                 "install" => action = Some(ActionTypes::Install),
                 "prune" => action = Some(ActionTypes::Prune),
+                "nublink" => action = Some(ActionTypes::Nublink),
                 &_ => ()
             }
         }
@@ -57,6 +54,7 @@ fn main() -> ProgramStatus {
     match action.unwrap() {
         ActionTypes::Install => install(),
         ActionTypes::Prune => prune::run(additional_args),
+        ActionTypes::Nublink => nublink::run(additional_args),
         ActionTypes::Help => ProgramStatus::SUCCESS
     }
 }
