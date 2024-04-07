@@ -15,6 +15,7 @@ pub fn parse_link_args(args: &Vec<String>) -> (Vec<Nub>, Vec<String>) {
                     "--frontend" => String::from("frontend"),
                     "--backend" => String::from("backend"),
                     "--spinup" => String::from("spinup"),
+                    "--spindown" => String::from("spindown"),
                     &_ => String::new()
                 };
 
@@ -37,10 +38,6 @@ pub fn link_nubs(nubs: &Vec<Nub>, dir: Directory) { // Not very efficient but is
 
     for nub_to_write in nubs {
         for nub in nubs { 
-            if nub_to_write == nub { // Loop through each nub we are writing to, skipping the current one
-                continue;
-            }
-
             nub.set_as_wd(&dir); // TODO could unwrap()
 
             let mut file = OpenOptions::new()

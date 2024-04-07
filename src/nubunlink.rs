@@ -1,5 +1,5 @@
 use crate::constants::{ProgramStatus, Nub, Directory};
-use crate::spinup;
+use crate::spindown;
 use crate::nublink;
 use std::fs::OpenOptions;
 use std::io::{BufRead, BufReader, Write};
@@ -49,7 +49,7 @@ pub fn unlink_nubs(nubs: &Vec<Nub>, dir: Directory) { // Not very efficient but 
             bytes.extend("\n".as_bytes());
         }
 
-        bytes.pop(); // to perserve empty new line 
+        bytes.pop(); // to perserve single empty new line 
 
         file.write_all(&bytes).unwrap();
         println!("Successfully unlinked nub '{:?}' from {:?} directory.", nub, dir);
@@ -70,8 +70,8 @@ pub fn run(args: &Vec<String>) -> ProgramStatus {
                 directories_to_run.push(Directory::Backend);
                 unlink_nubs(&nubs, Directory::Backend);
             },
-            &"spinup" => {
-                spinup::run_pre_parsed(&nubs, &directories_to_run);
+            &"spindown" => {
+                spindown::run_pre_parsed(&nubs, &directories_to_run);
             },
             &_ => ()
         }

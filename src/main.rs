@@ -2,26 +2,21 @@ mod prune;
 mod nublink;
 mod nubunlink;
 mod spinup;
+mod spindown;
 mod constants;
 
 use std::env;
-use self::constants::{IMT_SERVICES_DIR, ProgramStatus};
+use self::constants::ProgramStatus;
 
 
 #[derive(PartialEq)]
 enum ActionTypes {
-    Install,
     Nublink,
     Nubunlink,
     Spinup,
+    Spindown,
     Help,
     Prune
-}
-
-fn install() -> ProgramStatus {
-    // TODO: add to path? Set env variables?
-    println!("Jk, this isn't implemented yet. You'll have to add {} to your environment variables.", IMT_SERVICES_DIR);
-    ProgramStatus::SUCCESS
 }
 
 fn parse_args(args: &mut Vec<String>) -> (Option<ActionTypes>, Vec<String>) {
@@ -31,11 +26,11 @@ fn parse_args(args: &mut Vec<String>) -> (Option<ActionTypes>, Vec<String>) {
         if let Option::None = action {
             match arg.as_str() {
                 "help" => action = Some(ActionTypes::Help),
-                "install" => action = Some(ActionTypes::Install),
                 "prune" => action = Some(ActionTypes::Prune),
                 "nublink" => action = Some(ActionTypes::Nublink),
                 "nubunlink" => action = Some(ActionTypes::Nubunlink),
                 "spinup" => action = Some(ActionTypes::Spinup),
+                "spindown" => action = Some(ActionTypes::Spindown),
                 &_ => ()
             }
         }
@@ -58,11 +53,11 @@ fn main() -> ProgramStatus {
     }
 
     match action.unwrap() {
-        ActionTypes::Install => install(),
         ActionTypes::Prune => prune::run(&additional_args),
         ActionTypes::Nublink => nublink::run(&additional_args),
         ActionTypes::Nubunlink => nubunlink::run(&additional_args),
         ActionTypes::Spinup => spinup::run(&additional_args),
+        ActionTypes::Spindown => spindown::run(&additional_args),
         ActionTypes::Help => ProgramStatus::SUCCESS
     }
 }

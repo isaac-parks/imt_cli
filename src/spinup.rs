@@ -15,14 +15,13 @@ fn spawn_server(nub: &Nub, dir: &Directory) -> u32 {
         let mut cmd = Command::new("docker-compose");
         cmd.args(["up"]);
         let child: Child = cmd.spawn().unwrap();
-        println!("Backend is starting for {}. (pid: {})", nub.as_local_frontend_url(), child.id());
+        println!("Backend is starting for {}. (pid: {})", nub.as_string(), child.id());
         return child.id();
     };
 }
 
 // Add arg to run "yarn" first in each directory 
 pub fn run_pre_parsed(nubs: &Vec<Nub>, dirs: &Vec<Directory>) -> ProgramStatus {
-    println!("spinning up pre-parsed");
     for directory in dirs {
         for nub in nubs {
             let _pid: u32 = spawn_server(nub, directory);
