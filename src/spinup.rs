@@ -1,5 +1,6 @@
 use crate::constants::{ProgramStatus, Nub, Directory};
 use std::process::{Command, Child};
+use std::{thread, time};
 
 fn spawn_server(nub: &Nub, dir: &Directory) -> u32 {
     nub.set_as_wd(dir);
@@ -25,6 +26,8 @@ pub fn run_pre_parsed(nubs: &Vec<Nub>, dirs: &Vec<Directory>) -> ProgramStatus {
     for directory in dirs {
         for nub in nubs {
             let _pid: u32 = spawn_server(nub, directory);
+            // when multiple containers start at once, docker gets confused. Give it some time to start each container
+            thread::sleep(time::Duration::from_secs(1)); 
 
         }
     }
