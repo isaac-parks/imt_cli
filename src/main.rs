@@ -1,5 +1,7 @@
 mod prune;
 mod nublink;
+mod nubunlink;
+mod spinup;
 mod constants;
 
 use std::env;
@@ -10,6 +12,8 @@ use self::constants::{IMT_SERVICES_DIR, ProgramStatus};
 enum ActionTypes {
     Install,
     Nublink,
+    Nubunlink,
+    Spinup,
     Help,
     Prune
 }
@@ -30,6 +34,8 @@ fn parse_args(args: &mut Vec<String>) -> (Option<ActionTypes>, Vec<String>) {
                 "install" => action = Some(ActionTypes::Install),
                 "prune" => action = Some(ActionTypes::Prune),
                 "nublink" => action = Some(ActionTypes::Nublink),
+                "nubunlink" => action = Some(ActionTypes::Nubunlink),
+                "spinup" => action = Some(ActionTypes::Spinup),
                 &_ => ()
             }
         }
@@ -53,8 +59,10 @@ fn main() -> ProgramStatus {
 
     match action.unwrap() {
         ActionTypes::Install => install(),
-        ActionTypes::Prune => prune::run(additional_args),
-        ActionTypes::Nublink => nublink::run(additional_args),
+        ActionTypes::Prune => prune::run(&additional_args),
+        ActionTypes::Nublink => nublink::run(&additional_args),
+        ActionTypes::Nubunlink => nubunlink::run(&additional_args),
+        ActionTypes::Spinup => spinup::run(&additional_args),
         ActionTypes::Help => ProgramStatus::SUCCESS
     }
 }

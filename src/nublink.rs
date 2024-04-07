@@ -1,20 +1,9 @@
-use crate::constants::{ProgramStatus, Nub, set_working_dir};
+use crate::constants::{ProgramStatus, Nub, Directory};
+use crate::spinup;
+use std::fs::OpenOptions;
+use std::io::prelude::*;
 
-// link 
-// usage imt_cli nub_link br pd cms (would take each nub, find .env.development, 
-// append token (to id when removed), append corresponding nub urls
-// options, --frontend(default if not specified) --backend(set internal nubs in local.py)
-
-// figure out which nubs need linked based on args
-// navigate to IMTServices/nub.as_path()
-// find .env.development file
-// append -> new line + token
-// append each nub that needs linked
-// append end token
-// spin up each nub with yarn && yarn serve
-
-fn parse_args(args: Vec<String>) -> (Vec<Nub>, Vec<String>) {
-    // Could use an iterator to see flag arguments if needed
+pub fn parse_link_args(args: &Vec<String>) -> (Vec<Nub>, Vec<String>) {
     let mut flags: Vec<String> = Vec::new();
     let mut nubs: Vec<Nub> = Vec::new();
     for arg in args {
@@ -25,6 +14,7 @@ fn parse_args(args: Vec<String>) -> (Vec<Nub>, Vec<String>) {
                 let flag = match arg.as_str() {
                     "--frontend" => String::from("frontend"),
                     "--backend" => String::from("backend"),
+                    "--spinup" => String::from("spinup"),
                     &_ => String::new()
                 };
 
@@ -36,18 +26,67 @@ fn parse_args(args: Vec<String>) -> (Vec<Nub>, Vec<String>) {
     (nubs, flags)
 }
 
-pub fn link_nubs(nubs: Vec<Nub>) {
-    for nub in nubs {
-        set_working_dir(&nub.as_path_str());
+pub fn link_nubs(nubs: &Vec<Nub>, dir: Directory) { // Not very efficient but is easy
+    let token = "#$";
+    let mut tokens_assigned: Vec<&Nub> = Vec::new();
+
+    let file_name_to_write = match dir {
+        Directory::Frontend => ".env.development",
+        Directory::Backend => "local.py"
+    };
+
+    for nub_to_write in nubs {
+        for nub in nubs { 
+            if nub_to_write == nub { // Loop through each nub we are writing to, skipping the current one
+                continue;
+            }
+
+            nub.set_as_wd(&dir); // TODO could unwrap()
+
+            let mut file = OpenOptions::new()
+                .write(true)
+                .append(true)
+                .open(file_name_to_write).unwrap();
+
+            file.write("\n".as_bytes()).unwrap(); // Start write seq with a new line
+
+            if !tokens_assigned.contains(&nub) {
+                file.write(token.as_bytes()).unwrap(); // Write a token if we haven't been to this nub yet
+                file.write(" <- Leave these tokens and nub configs below at the end of the file for `imt_cli unlinknubs` to work correctly.".as_bytes()).unwrap();
+                file.write("\n".as_bytes()).unwrap();
+                tokens_assigned.push(nub)
+            }
+            if dir == Directory::Frontend {
+                file.write(nub_to_write.as_local_frontend_url().as_bytes()).unwrap();   
+            }
+            if dir == Directory::Backend {
+                file.write(nub_to_write.as_local_backend_url().as_bytes()).unwrap();                
+            }
+
+            println!("Successfully linked nub '{:?}' to {:?} directory.", nub, dir);
+        }
     }
 }
 
-pub fn run(args: Vec<String>) -> ProgramStatus {
-
-
-    println!("Hello nublink args! {:?}", args);
-    let (nubs, _flags) = parse_args(args);
-    link_nubs(nubs);
+pub fn run(args: &Vec<String>) -> ProgramStatus {
+    let (nubs, flags) = parse_link_args(&args);
+    let mut directories_to_run: Vec<Directory> = Vec::new();
+    for flag in &flags {
+        match &flag.as_str() {
+            &"frontend" => {
+                directories_to_run.push(Directory::Frontend);
+                link_nubs(&nubs, Directory::Frontend);
+            },
+            &"backend" => {
+                directories_to_run.push(Directory::Backend);
+                link_nubs(&nubs, Directory::Backend);
+            },
+            &"spinup" => {
+                spinup::run_pre_parsed(&nubs, &directories_to_run);
+            },
+            &_ => ()
+        }
+    }
 
     ProgramStatus::SUCCESS
 }
