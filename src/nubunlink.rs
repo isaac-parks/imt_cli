@@ -30,7 +30,7 @@ pub fn unlink_nubs(nubs: &Vec<Nub>, dir: Directory) { // Not very efficient but 
     };
 
     for nub in nubs { 
-        nub.set_as_wd(&dir); // TODO could unwrap()
+        nub.set_as_wd(&dir);
 
         let lines_to_rewrite = get_lines_to_rewrite(file_name_to_write);
 

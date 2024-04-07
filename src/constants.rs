@@ -88,7 +88,7 @@ impl Nub {
     }
 
     pub fn as_path_str(&self) -> String {
-        String::from(env::var(IMT_SERVICES_DIR).unwrap() + "/" + &self.as_string()) // todo need to unwrap imt_services_dir cleaner
+        String::from(env::var(IMT_SERVICES_DIR).unwrap() + "/" + &self.as_string())
     }
 
     pub fn as_local_frontend_url(&self) -> String {

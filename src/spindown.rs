@@ -44,7 +44,7 @@ fn shutdown_docker(nub: &Nub) {
 pub fn run_pre_parsed(nubs: &Vec<Nub>, dirs: &Vec<Directory>) -> ProgramStatus {
     for directory in dirs {
         if *directory == Directory::Frontend {
-            // Since there isn't a good way to find running node processes, pretty much just have to remove all node instances...
+            // Since there isn't a good way to find running node processes, just have to remove all node instances.
             kill_node();
         } else {
             for nub in nubs {

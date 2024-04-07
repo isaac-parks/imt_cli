@@ -98,7 +98,6 @@ fn make_dir(service_dir: Result<String,VarError>) -> String{
 
 pub fn run(_args: &Vec<String>) -> ProgramStatus { // Args unused for now
     let service_dir: String = make_dir(env::var(IMT_SERVICES_DIR));
-    // TODO support vue & pip packages
     if !set_working_dir(&service_dir) {
         println!("ERROR: Couldn't set working directory");
 

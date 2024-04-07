@@ -8,8 +8,6 @@ fn spawn_server(nub: &Nub, dir: &Directory) -> u32 {
         let mut cmd = Command::new("yarn");
         cmd.args(["serve"]);
         let child: Child = cmd.spawn().unwrap();
-        // this will be the process id of the yarn process zzz not node
-        //pgrep -l node | grep -Eo '[0-9]{1,5}' 
         println!("Frontend is starting for {}. (pid: {})", nub.as_local_frontend_url(), child.id());
         return child.id();
     } else {
@@ -20,8 +18,7 @@ fn spawn_server(nub: &Nub, dir: &Directory) -> u32 {
         return child.id();
     };
 }
-
-// Add arg to run "yarn" first in each directory 
+ 
 pub fn run_pre_parsed(nubs: &Vec<Nub>, dirs: &Vec<Directory>) -> ProgramStatus {
     for directory in dirs {
         for nub in nubs {

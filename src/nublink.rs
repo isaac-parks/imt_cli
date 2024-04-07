@@ -38,7 +38,7 @@ pub fn link_nubs(nubs: &Vec<Nub>, dir: Directory) { // Not very efficient but is
 
     for nub_to_write in nubs {
         for nub in nubs { 
-            nub.set_as_wd(&dir); // TODO could unwrap()
+            nub.set_as_wd(&dir);
 
             let mut file = OpenOptions::new()
                 .write(true)
