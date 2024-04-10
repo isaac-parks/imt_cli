@@ -3,6 +3,7 @@ use std::hash::Hash;
 use std::process::{Termination, ExitCode};
 use std::path::Path;
 use std::env;
+use env::VarError;
 
 pub const IMT_SERVICES_DIR: &str = "IMT_SERVICES_DIR";
 
@@ -142,4 +143,43 @@ pub fn set_working_dir(str_path: &String) -> bool {
     let wd = Path::new(str_path);
     let res = env::set_current_dir(&wd);
     res.is_ok()
+}
+
+fn parse_service_dir(service_dir: Result<String,VarError>) -> Option<String> {
+    if !service_dir.is_ok() {
+        return None
+    } else {
+        let home_dir: String = env::var("HOME").unwrap();
+        if let Result::Ok(dir) = service_dir {
+            if dir.chars().nth(0) == Some('~') {
+                return Some(String::from(format!("{}{}", &home_dir, &dir[1..])))
+            }
+        }
+        return None
+    }
+}
+
+pub fn get_service_dir_string() -> Option<String> {
+    let result = parse_service_dir(env::var(IMT_SERVICES_DIR));
+    match result {
+        Some(rs) => Some(rs),
+        None => {
+            eprintln!("
+                ERROR: You are trying to run an imt_cli command, but don't have the {} environment variable set/properly configured. 
+                (Hint: try setting the environment variable {} to the directory containing IMT services.)",
+                IMT_SERVICES_DIR,
+                IMT_SERVICES_DIR
+            );
+
+            None
+        }
+    }
+}
+
+pub fn health_check() -> Option<ProgramStatus> {
+    let dir_check = get_service_dir_string();
+    match dir_check {
+        Some(_) => Some(ProgramStatus::SUCCESS),
+        None => None
+    }
 }

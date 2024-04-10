@@ -3,7 +3,6 @@ use crate::constants::ProgramStatus;
 pub fn run(_args: &Vec<String>) -> ProgramStatus {
    println!("{}", format!("
     Available Commands: 
-        - `imt_cli install`
         - `imt_cli prune`
         - `imt_cli nublink`
         - `imt_cli nubunlink`
@@ -18,6 +17,8 @@ pub fn run(_args: &Vec<String>) -> ProgramStatus {
            will start the --frontend and/or --backends depending on what flag was passed.
 
         - `imt_cli nubunlink <--frontend> <--backend> <--spindown> <nubs_to_unlink>` Does the reverse of nublink.
+
+        - `imt_cli help` Displays this command.
     "
     ));
 

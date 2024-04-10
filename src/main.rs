@@ -7,7 +7,7 @@ mod constants;
 mod help;
 
 use std::env;
-use self::constants::ProgramStatus;
+use self::constants::{ProgramStatus, health_check};
 
 
 #[derive(PartialEq)]
@@ -44,6 +44,10 @@ fn parse_args(args: &mut Vec<String>) -> (Option<ActionTypes>, Vec<String>) {
 }
 
 fn main() -> ProgramStatus {
+    if let None = health_check() {
+        return ProgramStatus::FAILED
+    }
+
     let mut args: Vec<String> = env::args().collect();
     let (action, additional_args) = parse_args(&mut args);
 

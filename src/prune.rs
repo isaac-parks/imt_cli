@@ -1,11 +1,9 @@
 use std::env;
 use std::time::{SystemTime, Duration, UNIX_EPOCH};
-use env::VarError;
-
 use std::process::Command;
 use std::fs::read_dir;
 
-use crate::constants::{IMT_SERVICES_DIR, ProgramStatus, set_working_dir};
+use crate::constants::{ProgramStatus, set_working_dir, get_service_dir_string};
 
 
 fn rm_old_branches_from_cd(branch_data: &Vec<(String, usize)>) -> usize {
@@ -77,27 +75,13 @@ fn get_cd_last_commit_dates() -> Vec<(String, usize)> {
     branch_commit_dates
 }
 
-fn make_dir(service_dir: Result<String,VarError>) -> String{
-    if !service_dir.is_ok() {
-        eprintln!("ERROR: You are trying to prune, but don't have the {} environment variable set. 
-            (Hint: try running this command with install OR setting the environment variable {}
-            to the directory containing IMT services.)",
-            IMT_SERVICES_DIR,
-            IMT_SERVICES_DIR
-        );
-        return String::new()
-    }
-    let home_dir: String = env::var("HOME").unwrap();
-    if let Result::Ok(dir) = service_dir {
-        if dir.chars().nth(0) == Some('~') {
-            return String::from(format!("{}{}", &home_dir, &dir[1..]))
-        }
-    }
-    String::new()
-}
-
 pub fn run(_args: &Vec<String>) -> ProgramStatus { // Args unused for now
-    let service_dir: String = make_dir(env::var(IMT_SERVICES_DIR));
+    let service_dir: Option<String> = get_service_dir_string();
+    if let None = service_dir {
+        return ProgramStatus::FAILED
+    }
+
+    let service_dir = service_dir.unwrap();
     if !set_working_dir(&service_dir) {
         println!("ERROR: Couldn't set working directory");
 
