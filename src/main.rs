@@ -4,6 +4,7 @@ mod nubunlink;
 mod spinup;
 mod spindown;
 mod constants;
+mod help;
 
 use std::env;
 use self::constants::ProgramStatus;
@@ -47,7 +48,7 @@ fn main() -> ProgramStatus {
     let (action, additional_args) = parse_args(&mut args);
 
     if let Option::None = action {
-        println!("Available Commands: `imt_cli install`, `imt_cli prune`"); // hardcoding until more features are added
+        println!("Use `imt_cli help` for Available Commands and Usage."); // hardcoding until more features are added
 
         return ProgramStatus::FAILED;
     }
@@ -58,7 +59,7 @@ fn main() -> ProgramStatus {
         ActionTypes::Nubunlink => nubunlink::run(&additional_args),
         ActionTypes::Spinup => spinup::run(&additional_args),
         ActionTypes::Spindown => spindown::run(&additional_args),
-        ActionTypes::Help => ProgramStatus::SUCCESS
+        ActionTypes::Help => help::run(&additional_args)
     }
 }
 
