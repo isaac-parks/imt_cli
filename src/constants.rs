@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::hash::Hash;
 use std::process::{Termination, ExitCode};
 use std::path::Path;
-use std::env;
+use std::env::{self, current_dir};
 use env::VarError;
 
 pub const IMT_SERVICES_DIR: &str = "IMT_SERVICES_DIR";
@@ -71,7 +71,7 @@ impl Nub {
 
     pub fn as_string(&self) -> String {
         match self {
-            Nub::APIRouter => "api".to_string(),
+            Nub::APIRouter => "api-router".to_string(),
             Nub::Behandle => "behandle".to_string(),
             Nub::Billing => "billing".to_string(),
             Nub::BusinessRules => "business-rules".to_string(),
@@ -129,12 +129,12 @@ impl Nub {
         mappings.get(self).unwrap().clone()
     }
 
-    pub fn set_as_wd(&self, dir_type: &Directory) {
+    pub fn set_as_wd(&self, dir_type: &Directory) -> bool {
         if *dir_type == Directory::Frontend {
-            set_working_dir(&format!("{}{}", self.as_path_str(), "/frontend"));
+            return set_working_dir(&format!("{}{}", self.as_path_str(), "/frontend"));
         }
-        else if *dir_type == Directory::Backend {
-            set_working_dir(&format!("{}{}", self.as_path_str(), "/project/settings"));
+        else {
+            return set_working_dir(&format!("{}{}", self.as_path_str(), "/project/settings"));
         }
     }
 }
@@ -149,10 +149,12 @@ fn parse_service_dir(service_dir: Result<String,VarError>) -> Option<String> {
     if !service_dir.is_ok() {
         return None
     } else {
-        let home_dir: String = env::var("HOME").unwrap();
-        if let Result::Ok(dir) = service_dir {
-            if dir.chars().nth(0) == Some('~') {
-                return Some(String::from(format!("{}{}", &home_dir, &dir[1..])))
+        if let Result::Ok(s_dir) = service_dir {
+            let home_dir: String = env::var("HOME").unwrap();
+            if s_dir.chars().nth(0) == Some('~') {
+                return Some(String::from(format!("{}{}", &home_dir, &s_dir[1..])))
+            } else {
+                return Some(String::from(&s_dir))
             }
         }
         return None
@@ -163,23 +165,54 @@ pub fn get_service_dir_string() -> Option<String> {
     let result = parse_service_dir(env::var(IMT_SERVICES_DIR));
     match result {
         Some(rs) => Some(rs),
-        None => {
-            eprintln!("
-                ERROR: You are trying to run an imt_cli command, but don't have the {} environment variable set/properly configured. 
-                (Hint: try setting the environment variable {} to the directory containing IMT services.)",
-                IMT_SERVICES_DIR,
-                IMT_SERVICES_DIR
-            );
-
-            None
-        }
+        None => None
     }
 }
 
+pub const NUB_LIST: [Nub; 14] = [
+    Nub::APIRouter,
+    Nub::Behandle,
+    Nub::Billing,
+    Nub::BusinessRules,
+    Nub::CMS,
+    Nub::Filestore,
+    Nub::Forms,
+    Nub::Mapping,
+    Nub::Paglipat,
+    Nub::PlatformAdmin,
+    Nub::PolicyData,
+    Nub::ServiceTracker,
+    Nub::Users,
+    Nub::Vinna
+];
+
 pub fn health_check() -> Option<ProgramStatus> {
+    // Verify can find the IMT_SERVICES dir
     let dir_check = get_service_dir_string();
-    match dir_check {
-        Some(_) => Some(ProgramStatus::SUCCESS),
-        None => None
+    if let None = dir_check {
+        eprintln!("
+            ERROR: The {} environment variable is not set/properly configured. 
+            (Hint: try setting the environment variable {} to the directory containing IMT services.)",
+            IMT_SERVICES_DIR,
+            IMT_SERVICES_DIR
+        );
+        return None
     }
+
+    // Make sure directories for nubs exist
+    let root_dir = current_dir().unwrap();
+    for nub in NUB_LIST {
+        if !nub.set_as_wd(&Directory::Frontend) {
+            eprintln!("ERROR: Couldn't find frontend directory for {}", nub.as_string());
+            return None
+        }
+
+        if !nub.set_as_wd(&Directory::Backend) {
+            eprintln!("ERROR: Couldn't find backend directory for {}", nub.as_string());
+            return None
+        }
+    }
+    set_working_dir(&String::from(root_dir.to_str().unwrap()));
+
+    Some(ProgramStatus::SUCCESS)
 }

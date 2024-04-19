@@ -52,7 +52,7 @@ fn main() -> ProgramStatus {
     let (action, additional_args) = parse_args(&mut args);
 
     if let Option::None = action {
-        println!("Use `imt_cli help` for Available Commands and Usage."); // hardcoding until more features are added
+        println!("Use `imt_cli help` for Available Commands and Usage.");
 
         return ProgramStatus::FAILED;
     }
