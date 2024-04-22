@@ -89,8 +89,7 @@ impl Nub {
     }
 
     pub fn as_path_str(&self) -> String {
-        println!("{}", String::from(env::var(IMT_SERVICES_DIR).unwrap() + "/" + &self.as_string()));
-        String::from(env::var(IMT_SERVICES_DIR).unwrap() + "/" + &self.as_string())
+        parse_service_dir().unwrap()  + "/" + &self.as_string()
     }
 
     pub fn as_local_frontend_url(&self) -> String {
@@ -146,11 +145,13 @@ pub fn set_working_dir(str_path: &String) -> bool {
     res.is_ok()
 }
 
-fn parse_service_dir(service_dir: Result<String,VarError>) -> Option<String> {
+fn parse_service_dir() -> Option<String> {
+    let service_dir = env::var(IMT_SERVICES_DIR);
     if !service_dir.is_ok() {
         return None
     } else {
         if let Result::Ok(s_dir) = service_dir {
+            let s_dir = String::from(s_dir);
             let home_dir: String = env::var("HOME").unwrap();
             if s_dir.chars().nth(0) == Some('~') {
                 return Some(String::from(format!("{}{}", &home_dir, &s_dir[1..])))
@@ -163,7 +164,7 @@ fn parse_service_dir(service_dir: Result<String,VarError>) -> Option<String> {
 }
 
 pub fn get_service_dir_string() -> Option<String> {
-    let result = parse_service_dir(env::var(IMT_SERVICES_DIR));
+    let result = parse_service_dir();
     match result {
         Some(rs) => Some(rs),
         None => None
