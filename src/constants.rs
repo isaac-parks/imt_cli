@@ -71,7 +71,7 @@ impl Nub {
 
     pub fn as_string(&self) -> String {
         match self {
-            Nub::APIRouter => "api-router".to_string(),
+            Nub::APIRouter => "api".to_string(),
             Nub::Behandle => "behandle".to_string(),
             Nub::Billing => "billing".to_string(),
             Nub::BusinessRules => "business-rules".to_string(),
