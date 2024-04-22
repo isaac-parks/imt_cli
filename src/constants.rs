@@ -89,6 +89,7 @@ impl Nub {
     }
 
     pub fn as_path_str(&self) -> String {
+        println!("{}", String::from(env::var(IMT_SERVICES_DIR).unwrap() + "/" + &self.as_string()));
         String::from(env::var(IMT_SERVICES_DIR).unwrap() + "/" + &self.as_string())
     }
 
