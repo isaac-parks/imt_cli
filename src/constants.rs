@@ -205,12 +205,12 @@ pub fn health_check() -> Option<ProgramStatus> {
     let root_dir = current_dir().unwrap();
     for nub in NUB_LIST {
         if !nub.set_as_wd(&Directory::Frontend) {
-            eprintln!("ERROR: Couldn't find frontend directory for {}", nub.as_string());
+            eprintln!("ERROR during health check prevented command from running: Couldn't find frontend directory for {}", nub.as_string());
             return None
         }
 
         if !nub.set_as_wd(&Directory::Backend) {
-            eprintln!("ERROR: Couldn't find backend directory for {}", nub.as_string());
+            eprintln!("ERROR during health check prevented command from running: Couldn't find backend directory for {}", nub.as_string());
             return None
         }
     }
