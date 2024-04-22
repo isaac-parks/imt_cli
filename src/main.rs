@@ -44,10 +44,6 @@ fn parse_args(args: &mut Vec<String>) -> (Option<ActionTypes>, Vec<String>) {
 }
 
 fn main() -> ProgramStatus {
-    if let None = health_check() {
-        return ProgramStatus::FAILED
-    }
-
     let mut args: Vec<String> = env::args().collect();
     let (action, additional_args) = parse_args(&mut args);
 
@@ -55,6 +51,10 @@ fn main() -> ProgramStatus {
         println!("Use `imt_cli help` for Available Commands and Usage.");
 
         return ProgramStatus::FAILED;
+    }
+
+    if let None = health_check() {
+        return ProgramStatus::FAILED
     }
 
     match action.unwrap() {

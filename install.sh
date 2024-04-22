@@ -13,4 +13,4 @@ git clone $REPO $TEMP_DIR
 cd $TEMP_DIR
 cargo install --path $TEMP_DIR
 rm -rf $TEMP_DIR
-echo "`imt_cli` was installed at ~/.cargo/bin/imt_cli. In order to use it from the command line, make sure you add ~/.cargo/bin to your PATH variable."
+echo " imt_cli was installed at ~/.cargo/bin/imt_cli. In order to use it from the command line, make sure you add ~/.cargo/bin to your PATH variable."
