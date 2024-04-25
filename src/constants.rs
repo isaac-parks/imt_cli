@@ -3,7 +3,6 @@ use std::hash::Hash;
 use std::process::{Termination, ExitCode};
 use std::path::Path;
 use std::env::{self, current_dir};
-use env::VarError;
 
 pub const IMT_SERVICES_DIR: &str = "IMT_SERVICES_DIR";
 

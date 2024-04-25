@@ -6,7 +6,7 @@ mod spindown;
 mod constants;
 mod help;
 
-use std::{clone, env};
+use std::env;
 use self::constants::{ProgramStatus, health_check};
 
 
