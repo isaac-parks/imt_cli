@@ -57,7 +57,7 @@ pub fn link_nubs(nubs: &Vec<Nub>, dir: Directory) { // Not very efficient but is
                 file.write(nub_to_write.as_local_frontend_url().as_bytes()).unwrap();   
             }
             if dir == Directory::Backend {
-                file.write(nub_to_write.as_local_backend_url().as_bytes()).unwrap();                
+                file.write(nub_to_write.as_local_backend_url_internal().as_bytes()).unwrap();                
             }
 
             println!("Successfully linked nub '{:?}' to {:?} directory.", nub, dir);
