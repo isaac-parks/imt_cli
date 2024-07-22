@@ -5,7 +5,7 @@ TEMP_DIR="$(mktemp -d)"
 
 if ! command -v cargo &> /dev/null
 then
-    echo "Cargo is not installed. Please install Rust and Cargo with brew install rust"
+    echo "Cargo is not installed. Please install Rust and Cargo with the command: brew install rust"
     exit 1
 fi
 

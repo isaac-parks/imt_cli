@@ -40,7 +40,6 @@ pub fn set_vault_db(nub: &Nub) {
     }
 
     fs::rename(&temp_file_path, &file_path).unwrap();
-
 }
 
 pub fn run_pre_parsed(nubs: &Vec<Nub>) -> ProgramStatus {
@@ -53,5 +52,6 @@ pub fn run_pre_parsed(nubs: &Vec<Nub>) -> ProgramStatus {
 
 
 pub fn _run(_args: &Vec<String>) -> ProgramStatus {
+    println!("vault command cannot be ran by itself yet. Try running imt_cli nublink --vault <nubs> instead.");
     ProgramStatus::SUCCESS
 }

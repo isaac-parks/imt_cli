@@ -1,6 +1,31 @@
 use crate::constants::{ProgramStatus, Nub, Directory};
+use crate::unset_vault_db;
 use std::process::{Command, Child};
 use std::str;
+
+
+fn parse_args(args: &Vec<String>) -> (Vec<Nub>, bool, bool, bool) {
+    let mut backend = false;
+    let mut frontend = false;
+    let mut vault = false;
+    let mut nubs: Vec<Nub> = Vec::new();
+    for arg in args {
+        let nub: Option<Nub> = Nub::from_string(&arg);
+        match nub {
+            Option::Some(n) => nubs.push(n),
+            Option::None => {
+                match arg.as_str() {
+                    "--frontend" => frontend = true,
+                    "--backend" => backend = true,
+                    "--vault" => vault = true,
+                    &_ => ()
+                };
+            }
+        }
+    }
+
+    (nubs, frontend, backend, vault)
+}
 
 
 fn kill_node() {
@@ -55,7 +80,21 @@ pub fn run_pre_parsed(nubs: &Vec<Nub>, dirs: &Vec<Directory>) -> ProgramStatus {
     ProgramStatus::SUCCESS
 }
 
-pub fn run(_args: &Vec<String>) -> ProgramStatus {
-    println!("Not implemented yet, for now, you must run this command as --spindown with the `imt_cli nubunlink` command.");
+pub fn run(args: &Vec<String>) -> ProgramStatus {
+    let (nubs, destroy_front, destroy_back, rm_vault) = parse_args(args);
+
+    if rm_vault {
+        unset_vault_db::run_pre_parsed(&nubs);
+    }
+
+    if destroy_front {
+        kill_node();
+    }
+        if destroy_back {
+            for nub in nubs { 
+                shutdown_docker(&nub);
+            }
+        }
+
     ProgramStatus::SUCCESS
 }

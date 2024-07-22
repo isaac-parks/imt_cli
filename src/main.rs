@@ -1,6 +1,5 @@
 mod prune;
-mod nublink;
-mod nubunlink;
+mod link;
 mod spinup;
 mod spindown;
 mod constants;
@@ -50,7 +49,7 @@ fn main() -> ProgramStatus {
     let (action, additional_args) = parse_args(&mut args);
 
     if let Option::None = action {
-        println!("Use `imt_cli help` for Available Commands and Usage.");
+        println!("Welcome to imt_cli! Use `imt_cli help` for Available Commands and Usage.");
 
         return ProgramStatus::FAILED;
     }
@@ -61,8 +60,8 @@ fn main() -> ProgramStatus {
 
     match action.unwrap() {
         ActionTypes::Prune => prune::run(&additional_args),
-        ActionTypes::Nublink => nublink::run(&additional_args),
-        ActionTypes::Nubunlink => nubunlink::run(&additional_args),
+        ActionTypes::Nublink => link::nublink::run(&additional_args),
+        ActionTypes::Nubunlink => link::nubunlink::run(&additional_args),
         ActionTypes::Spinup => spinup::run(&additional_args),
         ActionTypes::Spindown => spindown::run(&additional_args),
         ActionTypes::Help => help::run(&additional_args)

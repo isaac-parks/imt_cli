@@ -50,5 +50,6 @@ pub fn run_pre_parsed(nubs: &Vec<Nub>) -> ProgramStatus {
 
 
 pub fn _run(_args: &Vec<String>) -> ProgramStatus {
+    println!("vault command cannot be ran by itself yet. Try running imt_cli nubunlink --vault <nubs> instead.");
     ProgramStatus::SUCCESS
 }
