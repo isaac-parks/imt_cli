@@ -14,7 +14,7 @@ pub fn set_vault_db(nub: &Nub) {
 
     for (index, line) in reader.lines().enumerate() {
         let line = line.unwrap();
-        if line.trim() == "environment:" {
+        if line.trim().contains("VAULT_TOKEN") {
             env_index = Some(index + 1);
         }
         lines.push(line);
