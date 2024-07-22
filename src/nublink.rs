@@ -1,5 +1,5 @@
 use crate::constants::{ProgramStatus, Nub, Directory};
-use crate::spinup;
+use crate::{spinup, vault_db};
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 
@@ -16,6 +16,7 @@ pub fn parse_link_args(args: &Vec<String>) -> (Vec<Nub>, Vec<String>) {
                     "--backend" => String::from("backend"),
                     "--spinup" => String::from("spinup"),
                     "--spindown" => String::from("spindown"),
+                    "--vault" => String::from("vault_db"),
                     &_ => String::new()
                 };
 
@@ -80,6 +81,9 @@ pub fn run(args: &Vec<String>) -> ProgramStatus {
             },
             &"spinup" => {
                 spinup::run_pre_parsed(&nubs, &directories_to_run);
+            },
+            &"vault_db" => {
+                vault_db::run_pre_parsed(&nubs);
             },
             &_ => ()
         }
