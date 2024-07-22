@@ -27,7 +27,7 @@ pub fn parse_link_args(args: &Vec<String>) -> (Vec<Nub>, Vec<String>) {
     (nubs, flags)
 }
 
-pub fn link_nubs(nubs: &Vec<Nub>, dir: Directory) { // Not very efficient but is easy
+pub fn link_nubs(nubs: &Vec<Nub>, dir: Directory) {
     let token = "#$";
     let mut tokens_assigned: Vec<&Nub> = Vec::new();
 

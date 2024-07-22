@@ -5,6 +5,7 @@ mod spinup;
 mod spindown;
 mod constants;
 mod help;
+mod vault_db;
 
 use std::env;
 use self::constants::{ProgramStatus, health_check};

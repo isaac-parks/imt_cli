@@ -110,20 +110,20 @@ impl Nub {
 
     pub fn as_local_backend_url_internal(&self) -> String {
         let mut mappings = HashMap::new();
-        mappings.insert(Nub::BusinessRules, "INTERNAL_NUBS['business-rules']=\"http://br:7004\"".to_string());
-        mappings.insert(Nub::CMS, "INTERNAL_NUBS['cms']=\"http://cms:7001\"".to_string());
+        mappings.insert(Nub::BusinessRules, "INTERNAL_NUBS['business-rules']=\"http://br:7004/\"".to_string());
+        mappings.insert(Nub::CMS, "INTERNAL_NUBS['cms']=\"http://cms:7001/\"".to_string());
         mappings.insert(Nub::Filestore, "INTERNAL_NUBS['filestore']=\"http://fs:7005\"".to_string());
-        mappings.insert(Nub::Forms, "INTERNAL_NUBS['forms']=\"http://forms:7002\"".to_string());
-        mappings.insert(Nub::Users, "INTERNAL_NUBS['users']=\"http://users:7007\"".to_string());
-        mappings.insert(Nub::Mapping, "INTERNAL_NUBS['mapping']=\"http://mapping:7015\"".to_string());
-        mappings.insert(Nub::PolicyData, "INTERNAL_NUBS['policy-data']=\"http://pd:7003\"".to_string());
-        mappings.insert(Nub::PlatformAdmin, "INTERNAL_NUBS['platform-admin']=\"http://pa:7000\"".to_string());
-        mappings.insert(Nub::Vinna, "INTERNAL_NUBS['vinna']=\"http://vinna:7016\"".to_string());
-        mappings.insert(Nub::Behandle, "INTERNAL_NUBS['behandle']=\"http://behandle:7010\"".to_string());
-        mappings.insert(Nub::Billing, "INTERNAL_NUBS['billing']=\"http://billing:7009\"".to_string());
-        mappings.insert(Nub::ServiceTracker, "INTERNAL_NUBS['service-tracker']=\"http://st:7006\"".to_string());
-        mappings.insert(Nub::APIRouter, "INTERNAL_NUBS['api-router']=\"http://api:7013\"".to_string());
-        mappings.insert(Nub::Paglipat, "INTERNAL_NUBS['paglipat']=\"http://paglipat:7017\"".to_string());
+        mappings.insert(Nub::Forms, "INTERNAL_NUBS['forms']=\"http://forms:7002/\"".to_string());
+        mappings.insert(Nub::Users, "INTERNAL_NUBS['users']=\"http://users:7007/\"".to_string());
+        mappings.insert(Nub::Mapping, "INTERNAL_NUBS['mapping']=\"http://mapping:7015/\"".to_string());
+        mappings.insert(Nub::PolicyData, "INTERNAL_NUBS['policy-data']=\"http://pd:7003/\"".to_string());
+        mappings.insert(Nub::PlatformAdmin, "INTERNAL_NUBS['platform-admin']=\"http://pa:7000/\"".to_string());
+        mappings.insert(Nub::Vinna, "INTERNAL_NUBS['vinna']=\"http://vinna:7016/\"".to_string());
+        mappings.insert(Nub::Behandle, "INTERNAL_NUBS['behandle']=\"http://behandle:7010/\"".to_string());
+        mappings.insert(Nub::Billing, "INTERNAL_NUBS['billing']=\"http://billing:7009/\"".to_string());
+        mappings.insert(Nub::ServiceTracker, "INTERNAL_NUBS['service-tracker']=\"http://st:7006/\"".to_string());
+        mappings.insert(Nub::APIRouter, "INTERNAL_NUBS['api-router']=\"http://api:7013/\"".to_string());
+        mappings.insert(Nub::Paglipat, "INTERNAL_NUBS['paglipat']=\"http://paglipat:7017/\"".to_string());
 
         mappings.get(self).unwrap().clone()
     }

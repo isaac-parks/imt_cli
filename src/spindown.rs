@@ -36,9 +36,9 @@ fn kill_node() {
 fn shutdown_docker(nub: &Nub) {
     nub.set_as_wd(&Directory::Backend);
     let mut cmd = Command::new("docker-compose");
-    cmd.args(["down"]);
+    cmd.args(["stop"]);
     let child: Child = cmd.spawn().unwrap();
-    println!("Backend is being shutdown for {}. (pid: {})", nub.as_string(), child.id());
+    println!("Backend is being stopped for {}. (pid: {})", nub.as_string(), child.id());
 }
 
 pub fn run_pre_parsed(nubs: &Vec<Nub>, dirs: &Vec<Directory>) -> ProgramStatus {
