@@ -52,6 +52,6 @@ pub fn run_pre_parsed(nubs: &Vec<Nub>) -> ProgramStatus {
 }
 
 
-pub fn run(_args: &Vec<String>) -> ProgramStatus {
+pub fn _run(_args: &Vec<String>) -> ProgramStatus {
     ProgramStatus::SUCCESS
 }

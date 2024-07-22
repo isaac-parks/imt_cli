@@ -1,6 +1,7 @@
 use crate::constants::{ProgramStatus, Nub, Directory};
 use crate::spindown;
 use crate::nublink;
+use crate::unset_vault_db;
 use std::fs::OpenOptions;
 use std::io::{BufRead, BufReader, Write};
 
@@ -72,6 +73,9 @@ pub fn run(args: &Vec<String>) -> ProgramStatus {
             },
             &"spindown" => {
                 spindown::run_pre_parsed(&nubs, &directories_to_run);
+            },
+            &"vault_db" => {
+                unset_vault_db::run_pre_parsed(&nubs);
             },
             &_ => ()
         }
